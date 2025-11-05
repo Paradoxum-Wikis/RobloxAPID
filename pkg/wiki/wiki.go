@@ -68,8 +68,10 @@ func NewWikiClient(apiURL, username, password string) (*WikiClient, error) {
 }
 
 func (w *WikiClient) Push(title, content, summary string) error {
+	log.Printf("[DEBUG] wiki.Push: preparing to push page %s (summary: %s)", title, summary)
 	token, err := w.client.GetToken("csrf")
 	if err != nil {
+		log.Printf("[ERROR] wiki.Push: failed to get token for %s: %v", title, err)
 		return err
 	}
 
@@ -83,7 +85,13 @@ func (w *WikiClient) Push(title, content, summary string) error {
 	}
 
 	_, err = w.client.Post(p)
-	return err
+	if err != nil {
+		log.Printf("[ERROR] wiki.Push: failed to push %s: %v", title, err)
+		return err
+	}
+
+	log.Printf("[INFO] wiki.Push: successfully pushed %s", title)
+	return nil
 }
 
 func logJSON(label string, obj *jason.Object) {

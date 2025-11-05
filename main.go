@@ -111,6 +111,8 @@ func main() {
 	aboutCategory := fmt.Sprintf("Category:%s-about", cfg.DynamicEndpoints.CategoryPrefix)
 	updateSchedule(processedEndpoints, &mu, aboutCategory, "about", cfg, time.Now())
 
+	bootstrapFromData(processedEndpoints, &mu, cfg)
+
 	checkCategories := func() {
 		log.Println("Checking for new wanted categories...")
 
@@ -387,4 +389,52 @@ func updateSchedule(processed map[string]*endpointState, mu *sync.Mutex, categor
 	state.interval = interval
 	state.nextRun = next
 	mu.Unlock()
+}
+
+func bootstrapFromData(processed map[string]*endpointState, mu *sync.Mutex, cfg *config.Config) {
+	entries, err := os.ReadDir("data")
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("[DEBUG] bootstrap: data directory not found; nothing to schedule yet")
+			return
+		}
+		log.Printf("[ERROR] bootstrap: cannot read data directory: %v", err)
+		return
+	}
+
+	count := 0
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		if !strings.HasSuffix(name, ".json") {
+			continue
+		}
+		base := strings.TrimSuffix(name, ".json")
+		parts := strings.SplitN(base, "-", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		endpointType, id := parts[0], parts[1]
+		if endpointType == "about" || endpointType == "badges" || id == "" {
+			continue
+		}
+
+		category := fmt.Sprintf("Category:%s-%s-%s", cfg.DynamicEndpoints.CategoryPrefix, endpointType, id)
+
+		mu.Lock()
+		_, exists := processed[category]
+		mu.Unlock()
+		if exists {
+			continue
+		}
+
+		log.Printf("[DEBUG] bootstrap: scheduling %s from %s", category, name)
+		updateSchedule(processed, mu, category, endpointType, cfg, time.Time{})
+		count++
+	}
+
+	log.Printf("[DEBUG] bootstrap: scheduled %d endpoints from existing data files", count)
 }
