@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// checks if new data differs from stored data, ignoring 'lastUpdated'
+// checks if new data differs from stored data, ignoring 'roLastUpdated'
 func HasChanged(path string, newData []byte) (bool, error) {
 	fullPath := filepath.Join("data", path)
 	oldData, err := os.ReadFile(fullPath)
@@ -22,7 +22,7 @@ func HasChanged(path string, newData []byte) (bool, error) {
 	if err := json.Unmarshal(oldData, &oldDataMap); err != nil {
 		return !bytes.Equal(oldData, newData), nil
 	}
-	delete(oldDataMap, "lastUpdated")
+	delete(oldDataMap, "roLastUpdated")
 
 	oldAPIData, err := json.Marshal(oldDataMap)
 	if err != nil {

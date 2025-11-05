@@ -14,7 +14,7 @@ func Save(path string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	dataMap["lastUpdated"] = time.Now().UTC().Format(time.RFC3339)
+	dataMap["roLastUpdated"] = time.Now().UTC().Format(time.RFC3339)
 
 	dataToSave, err := json.MarshalIndent(dataMap, "", "  ")
 	if err != nil {
