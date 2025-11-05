@@ -6,7 +6,11 @@ As its name suggests, RobloxAPID runs in the background, monitors updates from t
 
 RobloxAPID requires an account with [bot userrights](https://community.fandom.com/wiki/Help:Bots) to be used, meaning you will need to have the flag enabled.
 
-***RobloxAPID is also available as an opt-in service at no cost. All that's required is that your wiki is considered reputable. You can DM t7ru on Discord to opt in.***
+*RobloxAPID is also available as an opt-in service at no cost. All that's required is that your wiki is considered reputable. You can DM t7ru on Discord to opt in.*
+
+| Wikis using RobloxAPID | |
+| :------------------: | :--------------------: |
+| <a href="https://alterego.wiki/"><img src="https://static.wikia.nocookie.net/alter-ego/images/e/e6/Site-logo.png/revision/latest" width="200"></a><br>ALTER EGO Wiki | <a href="https://rex-reincarnated.fandom.com/"><img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100"></a><br>REx: Reincarnated Wiki |
 
 ## Why use it?
 - Lightweight: a single Go binary with very efficient resource usage.
