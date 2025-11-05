@@ -14,20 +14,11 @@ import (
 	"robloxapid/pkg/fetcher"
 	"robloxapid/pkg/storage"
 	"robloxapid/pkg/wiki"
-
-	_ "embed"
 )
-
-//go:embed pkg/wiki/roapid.lua
-var roapidLuaData string
 
 const roapiModuleVersion = "0.0.9"
 
-var roapiModuleContent string
-
-func init() {
-	roapiModuleContent = roapidLuaData
-}
+var roapiModuleContent = wiki.RoapidLua
 
 type endpointState struct {
 	endpointType string

@@ -1,6 +1,7 @@
 package wiki
 
 import (
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -277,3 +278,6 @@ func (w *WikiClient) PurgeCategoryMembers(category string) error {
 	}
 	return w.PurgePages(titles)
 }
+
+//go:embed roapid.lua
+var RoapidLua string
