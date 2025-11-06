@@ -108,10 +108,36 @@ func main() {
 	processedEndpoints := make(map[string]*endpointState)
 	var mu sync.Mutex
 
-	aboutCategory := fmt.Sprintf("Category:%s-about", cfg.DynamicEndpoints.CategoryPrefix)
-	updateSchedule(processedEndpoints, &mu, aboutCategory, "about", cfg, time.Now())
-
 	bootstrapFromData(processedEndpoints, &mu, cfg)
+
+	{
+		now := time.Now()
+		type toRef struct{ category, endpointType, id string }
+		var immediate []toRef
+
+		mu.Lock()
+		for category, st := range processedEndpoints {
+			if !st.nextRun.IsZero() && !now.Before(st.nextRun) {
+				et, id, err := parseCategory(category, cfg.DynamicEndpoints.CategoryPrefix)
+				if err != nil {
+					continue
+				}
+				immediate = append(immediate, toRef{category, et, id})
+			}
+		}
+		mu.Unlock()
+
+		for _, r := range immediate {
+			go func(r toRef) {
+				log.Printf("[DEBUG] bootstrap: immediate refresh %s", r.category)
+				if err := processEndpoint(wikiClient, cfg, r.endpointType, r.id, r.category); err != nil {
+					log.Printf("Error refreshing bootstrapped endpoint %s: %v", r.category, err)
+					return
+				}
+				updateSchedule(processedEndpoints, &mu, r.category, r.endpointType, cfg, time.Time{})
+			}(r)
+		}
+	}
 
 	checkCategories := func() {
 		log.Println("Checking for new wanted categories...")
@@ -176,6 +202,11 @@ func main() {
 			mu.Unlock()
 
 			for category, state := range endpointsToRefresh {
+				if time.Now().Before(state.nextRun) {
+					log.Printf("[DEBUG] refresh: skipping %s (nextRun %v)", category, state.nextRun)
+					continue
+				}
+
 				endpointType, id, err := parseCategory(category, cfg.DynamicEndpoints.CategoryPrefix)
 				if err != nil {
 					log.Printf("Error parsing category %s: %v", category, err)
@@ -256,16 +287,18 @@ func processEndpoint(wikiClient *wiki.WikiClient, cfg *config.Config, endpointTy
 		return fmt.Errorf("error checking changes for %s: %v", path, err)
 	}
 
-	if !hasChanged {
-		log.Printf("No changes for %s, but making sure page exists.", url)
-	}
-
 	log.Printf("Updating data for %s...", url)
 	dataToPush, err := storage.Save(path, newData)
 	if err != nil {
 		return fmt.Errorf("error saving data to %s: %v", path, err)
 	}
 
+	if !hasChanged {
+		log.Printf("No meaningful changes for %s (only roLastUpdated or none), skipping wiki push.", url)
+		return nil
+	}
+
+	log.Printf("Meaningful changes detected for %s, pushing to wiki.", url)
 	wikiTitle := fmt.Sprintf("%s:roapid/%s-%s.json", cfg.Wiki.Namespace, endpointType, id)
 	summary := fmt.Sprintf("Automated update from %s", url)
 	err = wikiClient.Push(wikiTitle, string(dataToPush), summary)
@@ -418,7 +451,7 @@ func bootstrapFromData(processed map[string]*endpointState, mu *sync.Mutex, cfg 
 		}
 
 		endpointType, id := parts[0], parts[1]
-		if endpointType == "about" || endpointType == "badges" || id == "" {
+		if id == "" {
 			continue
 		}
 
@@ -432,7 +465,7 @@ func bootstrapFromData(processed map[string]*endpointState, mu *sync.Mutex, cfg 
 		}
 
 		log.Printf("[DEBUG] bootstrap: scheduling %s from %s", category, name)
-		updateSchedule(processed, mu, category, endpointType, cfg, time.Time{})
+		updateSchedule(processed, mu, category, endpointType, cfg, time.Now())
 		count++
 	}
 

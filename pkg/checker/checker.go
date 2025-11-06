@@ -12,7 +12,6 @@ import (
 func HasChanged(path string, newData []byte) (bool, error) {
 	fullPath := filepath.Join("data", path)
 	log.Printf("[DEBUG] checker.HasChanged: checking %s", fullPath)
-
 	oldData, err := os.ReadFile(fullPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -35,15 +34,14 @@ func HasChanged(path string, newData []byte) (bool, error) {
 		return true, nil
 	}
 	delete(oldDataMap, "roLastUpdated")
-
 	oldAPIData, err := json.Marshal(oldDataMap)
 	if err != nil {
 		log.Printf("[ERROR] checker.HasChanged: failed to marshal old data for %s: %v", fullPath, err)
 		return false, err
 	}
 
-	var newAPIDataMap map[string]interface{}
-	if err := json.Unmarshal(newData, &newAPIDataMap); err != nil {
+	var newDataMap map[string]interface{}
+	if err := json.Unmarshal(newData, &newDataMap); err != nil {
 		eq := bytes.Equal(oldData, newData)
 		if eq {
 			log.Printf("[DEBUG] checker.HasChanged: new data unmarshal failed but raw compare -> unchanged: %s", fullPath)
@@ -52,7 +50,8 @@ func HasChanged(path string, newData []byte) (bool, error) {
 		log.Printf("[DEBUG] checker.HasChanged: new data unmarshal failed but raw compare -> changed: %s", fullPath)
 		return true, nil
 	}
-	newAPIData, err := json.Marshal(newAPIDataMap)
+	delete(newDataMap, "roLastUpdated")
+	newAPIData, err := json.Marshal(newDataMap)
 	if err != nil {
 		log.Printf("[ERROR] checker.HasChanged: failed to marshal new data for %s: %v", fullPath, err)
 		return false, err
