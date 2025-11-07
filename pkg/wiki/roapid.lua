@@ -80,6 +80,11 @@ function roapid.users(frame)
     return roapid._get(frame, "users", id and id ~= "")
 end
 
+function roapid.groups(frame)
+    local id = frame.args[1]
+    return roapid._get(frame, "groups", id and id ~= "")
+end
+
 function roapid.about(frame)
     return roapid._get(frame, "about", false)
 end

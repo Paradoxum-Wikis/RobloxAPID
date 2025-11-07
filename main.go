@@ -16,7 +16,7 @@ import (
 	"robloxapid/pkg/wiki"
 )
 
-const roapiModuleVersion = "0.0.9"
+const roapiModuleVersion = "0.0.10"
 
 var roapiModuleContent = wiki.RoapidLua
 
@@ -265,7 +265,7 @@ func processEndpoint(wikiClient *wiki.WikiClient, cfg *config.Config, endpointTy
 	)
 
 	switch endpointType {
-	case "users":
+	case "users", "groups":
 		if cfg.OpenCloud.APIKey == "" {
 			return fmt.Errorf("open cloud api key required for %s", endpointType)
 		}

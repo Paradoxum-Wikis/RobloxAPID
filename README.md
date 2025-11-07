@@ -28,6 +28,7 @@ RobloxAPID requires an account with [bot userrights](https://community.fandom.co
 ## Currently supported endpoints
 - **Open Cloud**
   - Users
+  - Groups
 - **Legacy**
   - Badges
 
@@ -67,7 +68,9 @@ Main configuration file:
     "dynamicEndpoints": {
         "categoryPrefix": "robloxapid-queue",
         "apiMap": {
-            "badges": "https://badges.roblox.com/v1/badges/%s"
+            "badges": "https://badges.roblox.com/v1/badges/%s",
+            "users": "https://apis.roblox.com/cloud/v2/users/%s",
+            "groups": "https://apis.roblox.com/cloud/v2/groups/%s"
         },
         "refreshIntervals": {
             "badges": "30m",

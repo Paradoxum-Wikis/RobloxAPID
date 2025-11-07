@@ -13,7 +13,8 @@
         "categoryPrefix": "robloxapid-queue",
         "apiMap": {
             "badges": "https://badges.roblox.com/v1/badges/%s",
-            "users": "https://apis.roblox.com/cloud/v2/users/%s"
+            "users": "https://apis.roblox.com/cloud/v2/users/%s",
+            "groups": "https://apis.roblox.com/cloud/v2/groups/%s"
         },
         "refreshIntervals": {
             "badges": "30m",
