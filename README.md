@@ -10,9 +10,9 @@ RobloxAPID requires an account with [bot userrights](https://community.fandom.co
 
 ### Wikis using RobloxAPID:
 
-| <a href="https://alterego.wiki/"><img src="https://static.wikia.nocookie.net/alter-ego/images/e/e6/Site-logo.png/revision/latest" width="200"></a> | <a href="https://rex-reincarnated.fandom.com/"><img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100"></a> |
-| :-: | :-: |
-| ALTER EGO Wiki | REx: Reincarnated Wiki |
+| <a href="https://alterego.wiki/"><img src="https://static.wikia.nocookie.net/alter-ego/images/e/e6/Site-logo.png/revision/latest" width="200"></a> | <a href="https://tds.wiki/"><img src="https://static.wikia.nocookie.net/tower-defense-sim/images/e/e6/Site-logo.png/revision/latest" width="220"></a> | <a href="https://rex-reincarnated.fandom.com/"><img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100"></a> |
+| :-: | :-: | :-: |
+| ALTER EGO Wiki | Tower Defense Simulator Wiki | REx: Reincarnated Wiki |
 
 ## Why use it?
 - Lightweight: a single Go binary with very efficient resource usage.

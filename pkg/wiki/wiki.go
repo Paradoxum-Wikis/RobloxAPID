@@ -120,15 +120,21 @@ func (w *WikiClient) GetPageByName(pageName string) (string, error) {
 
 	pages, err := resp.GetObjectArray("query", "pages")
 	if err != nil {
+		if strings.Contains(err.Error(), "no value for key") {
+			return "", errors.New("page not found")
+		}
 		return "", err
 	}
 	if len(pages) == 0 {
-		return "", errors.New("no pages in response")
+		return "", errors.New("page not found")
 	}
 
 	page := pages[0]
 	pageID, _ := page.GetInt64("pageid")
 	if pageID == -1 {
+		return "", errors.New("page not found")
+	}
+	if missing, _ := page.GetBoolean("missing"); missing {
 		return "", errors.New("page not found")
 	}
 
