@@ -1,73 +1,70 @@
--- 0.0.9
+-- 0.0.10
 -- https://github.com/paradoxum-wikis/RobloxAPID
 local roapid = {}
-local function get_by_path(tbl, parts)
+
+local function getByPath(tbl, parts)
     local cur = tbl
     for i = 1, #parts do
-        if type(cur) ~= "table" then
-            return nil
-        end
+        if type(cur) ~= "table" then return nil end
         cur = cur[parts[i]]
     end
     return cur
 end
 
-local function build_title(resource, id)
-    if id == "" then
-        return string.format("Module:roapid/%s.json", resource)
-    else
-        return string.format("Module:roapid/%s-%s.json", resource, id)
-    end
+local function buildTitle(resource, id)
+    return (id == "" or not id)
+        and string.format("Module:roapid/%s.json", resource)
+         or string.format("Module:roapid/%s-%s.json", resource, id)
 end
 
-local function get_queue_category(resource, id)
-    if resource == "badges" and id ~= "" then
-        return string.format("[[Category:robloxapid-queue-badges-%s]]", id)
-    end
-    if resource == "users" and id ~= "" then
-        return string.format("[[Category:robloxapid-queue-users-%s]]", id)
+local function getQueueCategory(resource, id)
+    if id and id ~= "" then
+        return string.format("[[Category:robloxapid-queue-%s-%s]]", resource, id)
     end
     return ""
 end
 
-function roapid._get(frame, resource, needs_id)
+local function getQueueNotice(resource, id)
+    local cat = getQueueCategory(resource, id)
+    local note = "Publish this page and wait at least a minute for data to be fetched."
+    return cat ~= "" and (cat .. note) or note
+end
+
+function roapid._get(frame, resource, needsId)
     local args = frame.args
-    local id = needs_id and (args[1] or "") or ""
+    local id = needsId and (args[1] or "") or ""
+
     local path = {}
-    local start_idx = needs_id and 2 or 1
-    local i = start_idx
+    local i = needsId and 2 or 1
     while args[tostring(i)] do
         local v = args[tostring(i)]
-        if v and v ~= "" then
-            path[#path + 1] = v
-        end
+        if v and v ~= "" then path[#path + 1] = v end
         i = i + 1
     end
 
-    if needs_id and id == "" then
+    if needsId and id == "" then
         return ""
     end
 
-    local module_name = build_title(resource, id)
-    local ok, data = pcall(mw.loadJsonData, module_name)
-
+    local moduleName = buildTitle(resource, id)
+    local ok, data = pcall(mw.loadJsonData, moduleName)
     if not ok or type(data) ~= "table" then
-        return get_queue_category(resource, id)
+        return getQueueNotice(resource, id)
     end
 
     if #path == 0 then
-        local json_ok, json = pcall(mw.text.jsonEncode, data)
-        return json_ok and json or mw.text.jsonEncode(data)
+        local okJson, json = pcall(mw.text.jsonEncode, data)
+        return okJson and json or mw.text.jsonEncode(data)
     end
 
-    local value = get_by_path(data, path)
+    local value = getByPath(data, path)
     if value == nil then
-        return ""
+        return getQueueNotice(resource, id)
     end
 
     if type(value) == "table" then
-        local json_ok, json = pcall(mw.text.jsonEncode, value)
-        return json_ok and json or mw.text.jsonEncode(value)
+        local okJson, json = pcall(mw.text.jsonEncode, value)
+        return okJson and json or mw.text.jsonEncode(value)
     else
         return tostring(value)
     end
@@ -75,19 +72,12 @@ end
 
 function roapid.badges(frame)
     local id = frame.args[1]
-    if not id or id == "" then
-        return roapid._get(frame, "badges", false)
-    end
-    return roapid._get(frame, "badges", true)
+    return roapid._get(frame, "badges", id and id ~= "")
 end
 
 function roapid.users(frame)
     local id = frame.args[1]
-    -- serve root Module:roapid/users.json when no id provided
-    if not id or id == "" then
-        return roapid._get(frame, "users", false)
-    end
-    return roapid._get(frame, "users", true)
+    return roapid._get(frame, "users", id and id ~= "")
 end
 
 function roapid.about(frame)
