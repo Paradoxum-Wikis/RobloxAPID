@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"robloxapid/pkg/config"
@@ -14,6 +17,9 @@ const roapiModuleVersion = "0.0.12"
 var roapiModuleContent = wiki.RoapidLua
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	defer stop()
+
 	log.Println("--- RobloxAPID ---")
 	log.Println("Description: A daemon that bridges the Roblox API to Fandom wikis.")
 	log.Println("Source: https://github.com/paradoxum-wikis/RobloxAPID")
@@ -66,34 +72,30 @@ func main() {
 		log.Printf("Initial documentation sync failed: %v", err)
 	}
 
-	go func() {
-		if aboutInterval <= 0 {
-			return
-		}
-		ticker := time.NewTicker(aboutInterval)
-		defer ticker.Stop()
-		for range ticker.C {
-			if err := processAboutEndpoint(wikiClient, cfg); err != nil {
-				log.Printf("Scheduled about sync failed: %v", err)
-			}
-		}
-	}()
-
-	go func() {
-		if documentationInterval <= 0 {
-			return
-		}
-		ticker := time.NewTicker(documentationInterval)
-		defer ticker.Stop()
-		for range ticker.C {
-			if err := syncStaticDocs(wikiClient, cfg); err != nil {
-				log.Printf("Scheduled documentation sync failed: %v", err)
-			}
-		}
-	}()
-
 	processedEndpoints := make(map[string]*endpointState)
 	var mu sync.Mutex
+	var workers sync.WaitGroup
+
+	startTicker := func(interval time.Duration, name string, fn func()) {
+		if interval <= 0 {
+			return
+		}
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			ticker := time.NewTicker(interval)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ctx.Done():
+					log.Printf("%s ticker stopping", name)
+					return
+				case <-ticker.C:
+					fn()
+				}
+			}
+		}()
+	}
 
 	bootstrapFromData(processedEndpoints, &mu, cfg)
 
@@ -115,7 +117,15 @@ func main() {
 		mu.Unlock()
 
 		for _, r := range immediate {
+			workers.Add(1)
 			go func(r toRef) {
+				defer workers.Done()
+				select {
+				case <-ctx.Done():
+					log.Printf("[DEBUG] bootstrap: skipping %s due to shutdown", r.category)
+					return
+				default:
+				}
 				log.Printf("[DEBUG] bootstrap: immediate refresh %s", r.category)
 				if err := processEndpoint(wikiClient, cfg, r.endpointType, r.id, r.category); err != nil {
 					log.Printf("Error refreshing bootstrapped endpoint %s: %v", r.category, err)
@@ -163,63 +173,66 @@ func main() {
 		}
 	}
 
-	go func() {
-		checkCategories()
+	checkCategories()
 
-		ticker := time.NewTicker(categoryInterval)
-		defer ticker.Stop()
-
-		for range ticker.C {
-			checkCategories()
+	startTicker(aboutInterval, "about sync", func() {
+		if err := processAboutEndpoint(wikiClient, cfg); err != nil {
+			log.Printf("Scheduled about sync failed: %v", err)
 		}
-	}()
+	})
 
-	go func() {
-		ticker := time.NewTicker(dataInterval)
-		defer ticker.Stop()
+	startTicker(documentationInterval, "documentation sync", func() {
+		if err := syncStaticDocs(wikiClient, cfg); err != nil {
+			log.Printf("Scheduled documentation sync failed: %v", err)
+		}
+	})
 
-		for range ticker.C {
-			log.Println("Refreshing existing data...")
+	startTicker(categoryInterval, "category scan", checkCategories)
+
+	startTicker(dataInterval, "data refresh", func() {
+		log.Println("Refreshing existing data...")
+
+		mu.Lock()
+		endpointsToRefresh := make(map[string]*endpointState)
+		for k, v := range processedEndpoints {
+			endpointsToRefresh[k] = v
+		}
+		mu.Unlock()
+
+		for category, state := range endpointsToRefresh {
+			if time.Now().Before(state.nextRun) {
+				log.Printf("[DEBUG] refresh: skipping %s (nextRun %v)", category, state.nextRun)
+				continue
+			}
+
+			endpointType, id, err := parseCategory(category, cfg.DynamicEndpoints.CategoryPrefix)
+			if err != nil {
+				log.Printf("Error parsing category %s: %v", category, err)
+				continue
+			}
+
+			log.Printf("Refreshing endpoint %s...", category)
+			if err := processEndpoint(wikiClient, cfg, endpointType, id, category); err != nil {
+				log.Printf("Error refreshing endpoint %s: %v", category, err)
+				continue
+			}
 
 			mu.Lock()
-			endpointsToRefresh := make(map[string]*endpointState)
-			for k, v := range processedEndpoints {
-				endpointsToRefresh[k] = v
+			if st, ok := processedEndpoints[category]; ok && st != nil {
+				st.nextRun = time.Now().Add(st.interval)
+			} else {
+				processedEndpoints[category] = &endpointState{
+					endpointType: endpointType,
+					interval:     state.interval,
+					nextRun:      time.Now().Add(state.interval),
+				}
 			}
 			mu.Unlock()
-
-			for category, state := range endpointsToRefresh {
-				if time.Now().Before(state.nextRun) {
-					log.Printf("[DEBUG] refresh: skipping %s (nextRun %v)", category, state.nextRun)
-					continue
-				}
-
-				endpointType, id, err := parseCategory(category, cfg.DynamicEndpoints.CategoryPrefix)
-				if err != nil {
-					log.Printf("Error parsing category %s: %v", category, err)
-					continue
-				}
-
-				log.Printf("Refreshing endpoint %s...", category)
-				if err := processEndpoint(wikiClient, cfg, endpointType, id, category); err != nil {
-					log.Printf("Error refreshing endpoint %s: %v", category, err)
-					continue
-				}
-
-				mu.Lock()
-				if st, ok := processedEndpoints[category]; ok && st != nil {
-					st.nextRun = time.Now().Add(st.interval)
-				} else {
-					processedEndpoints[category] = &endpointState{
-						endpointType: endpointType,
-						interval:     state.interval,
-						nextRun:      time.Now().Add(state.interval),
-					}
-				}
-				mu.Unlock()
-			}
 		}
-	}()
+	})
 
-	select {}
+	<-ctx.Done()
+	log.Println("Shutdown signal received, waiting for workers to finish...")
+	workers.Wait()
+	log.Println("Shutdown complete.")
 }

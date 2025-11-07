@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -26,9 +27,33 @@ func Save(path string, data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	err = os.WriteFile(fullPath, dataToSave, 0644)
+	tempFile, err := os.CreateTemp(filepath.Dir(fullPath), filepath.Base(path)+".tmp-*")
 	if err != nil {
 		return nil, err
+	}
+	tempPath := tempFile.Name()
+	defer func() {
+		tempFile.Close()
+		os.Remove(tempPath)
+	}()
+
+	if _, err := tempFile.Write(dataToSave); err != nil {
+		return nil, err
+	}
+	if err := tempFile.Sync(); err != nil {
+		return nil, err
+	}
+	if err := tempFile.Close(); err != nil {
+		return nil, err
+	}
+
+	if err := os.Rename(tempPath, fullPath); err != nil {
+		if removeErr := os.Remove(fullPath); removeErr != nil && !os.IsNotExist(removeErr) {
+			return nil, fmt.Errorf("failed to replace %s: %w", fullPath, err)
+		}
+		if err := os.Rename(tempPath, fullPath); err != nil {
+			return nil, err
+		}
 	}
 
 	return dataToSave, nil
