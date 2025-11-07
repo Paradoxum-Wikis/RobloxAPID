@@ -1,0 +1,23 @@
+{
+  "description": "The places open cloud API.",
+  "usage": {
+    "full_record": "{{#invoke:roapid|places|<universeId>-<placeId>}}",
+    "field": "{{#invoke:roapid|places|<universeId>-<placeId>|displayName}}"
+  },
+  "fields": [
+    "path",
+    "createTime",
+    "updateTime",
+    "displayName",
+    "description",
+    "serverSize",
+    "root",
+    "universeRuntimeCreation",
+    "templatePlace"
+  ],
+  "examples": [
+    "{{#invoke:roapid|places|1176784616-3260590327}}",
+    "{{#invoke:roapid|places|1176784616-3260590327|displayName}}",
+    "{{#invoke:roapid|places|1176784616-3260590327|serverSize}}"
+  ]
+}
