@@ -30,7 +30,7 @@ RobloxAPID requires an account with [bot userrights](https://community.fandom.co
   - Users
   - Groups
   - Universes
-  - Places (ID format `universeId-placeId`)
+  - Places
 - **Legacy**
   - Badges
 
@@ -87,7 +87,6 @@ Main configuration file:
     }
 }
 ```
-- Add new queue categories as `Category:robloxapid-queue-<endpoint>-<id>`. For places, combine the IDs as `universeId-placeId` (e.g., `Category:robloxapid-queue-places-12345-67890`).
 - `categoryCheckInterval`: How often to check for new categories (this is how we know what to fetch).
 - `dataRefreshInterval`: Default refresh interval for endpoints.
 - `apiMap`: Maps endpoint types to API URLs (use `%s` for ID placeholder).
@@ -104,27 +103,10 @@ Static about information, if you're hosting publicly, do not change it:
 }
 ```
 
-### badges.json
-Static badges usage guide:
-```json
-{
-  "description": "Roblox badges API integration yippee!",
-  "usage": {
-    "specific_badge": "{{#invoke:roapid|badges|badge_id}} - Replace 'badge_id' with the numeric Roblox badge ID to get full badge data.",
-    "index": "{{#invoke:roapid|badges}} - Returns this usage guide.",
-    "subfields": "{{#invoke:roapid|badges|badge_id|field}} - Access a specific field (e.g., 'description', 'statistics').",
-    "nested": "{{#invoke:roapid|badges|badge_id|field|subfield}} - Drill deeper, dehehe (e.g., 'statistics|awardedCount')."
-  },
-  "examples": [
-    "{{#invoke:roapid|badges|3964419828587997}}",
-    "{{#invoke:roapid|badges|3964419828587997|description}}",
-    "{{#invoke:roapid|badges|3964419828587997|statistics|awardedCount}}"
-  ]
-}
-```
+### badges.json / users.json / groups.json / universes.json / places.json
+Static usage guides for the API endpoints. Each file documents relevant information such as usage, description, fields, and examples.
 
-### users.json / groups.json / universes.json / places.json
-Static usage guides for the Open Cloud endpoints. Each file documents queue categories, example invokes, and available fields. They sync to `Module:roapid/<endpoint>.json` just like `badges.json`, so editors can surface instructions directly on the wiki.
+They all sync to `Module:roapid/<endpoint>.json` so editors can surface instructions directly on the wiki.
 
 ## Usage
 
