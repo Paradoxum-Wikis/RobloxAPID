@@ -1,12 +1,12 @@
 # RobloxAPID
+**RobloxAPID**, also known as **roapid**, is a lightweight Go daemon that bridges the Roblox API to Fandom (and other MediaWiki) wikis.
 
-Also known as **roapid**, is a daemon that bridges the Roblox API to Fandom wikis (well technically it works everywhere using MediaWiki).
+As the name suggests, it continuously runs in the background, monitoring updates from Roblox's **Open Cloud** and **Legacy** APIs, then automatically mirrors the latest data to your wiki. This allows readers to see up-to-date Roblox information across both **FandomDesktop** and **FandomMobile** skins.
 
-As its name suggests, RobloxAPID runs in the background, monitors updates from the Roblox API, and mirrors them back to the wiki. This allows readers to see up-to-date Roblox data on both desktop and mobile Fandom skins.
+RobloxAPID requires an account with [**bot userrights**](https://community.fandom.com/wiki/Help:Bots), meaning you will need to have the flag enabled.
 
-RobloxAPID requires an account with [bot userrights](https://community.fandom.com/wiki/Help:Bots) to be used, meaning you will need to have the flag enabled.
-
-***RobloxAPID is also available as an opt-in service at no cost. All that's required is that your wiki is considered reputable. You can DM t7ru on Discord to opt in.***
+> [!TIP]
+> **Don't want to self-host?** RobloxAPID is also available as a **free opt-in service** for reputable Fandom wikis. Simply contact **t7ru on Discord** to request access!
 
 ### Wikis using RobloxAPID:
 
@@ -84,7 +84,7 @@ Main configuration file:
             "groups": "1h",
             "universes": "1h",
             "places": "1h",
-            "games": "1h",
+            "games": "1h"
         }
     }
 }
