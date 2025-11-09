@@ -8,11 +8,33 @@ RobloxAPID requires an account with [**bot userrights**](https://community.fando
 > [!TIP]
 > **Don't want to self-host?** RobloxAPID is also available as a **free opt-in service** for reputable Fandom wikis. Simply contact **t7ru on Discord** to request access!
 
-### Wikis using RobloxAPID:
-
-| <a href="https://alterego.wiki/"><img src="https://static.wikia.nocookie.net/alter-ego/images/e/e6/Site-logo.png/revision/latest" width="200"></a> | <a href="https://tds.wiki/"><img src="https://static.wikia.nocookie.net/tower-defense-sim/images/e/e6/Site-logo.png/revision/latest" width="220"></a> | <a href="https://rex-reincarnated.fandom.com/"><img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100"></a> |
-| :-: | :-: | :-: |
-| ALTER EGO Wiki | Tower Defense Simulator Wiki | REx: Reincarnated Wiki |
+<table>
+  <tr>
+    <th colspan="3" align="left">Wikis using RobloxAPID</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://alterego.wiki/">
+        <img src="https://static.wikia.nocookie.net/alter-ego/images/e/e6/Site-logo.png/revision/latest" width="200">
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://tds.wiki/">
+        <img src="https://static.wikia.nocookie.net/tower-defense-sim/images/e/e6/Site-logo.png/revision/latest" width="220">
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://rex-reincarnated.fandom.com/">
+        <img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">ALTER EGO Wiki</td>
+    <td align="center">Tower Defense Simulator Wiki</td>
+    <td align="center">REx: Reincarnated Wiki</td>
+  </tr>
+</table>
 
 ## Why use it?
 - Lightweight: a single Go binary with very efficient resource usage.
