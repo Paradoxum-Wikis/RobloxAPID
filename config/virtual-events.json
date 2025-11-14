@@ -1,5 +1,5 @@
 {
-  "description": "Lists virtual events for a universe via Roblox's internal virtual-events API.",
+  "description": "The internal virtual-events API, gives you information about events for a universe.",
   "usage": {
     "full_record": "{{#invoke:roapid|virtual-events|<universeId>}}",
     "field": "{{#invoke:roapid|virtual-events|<universeId>|<field>}}",
