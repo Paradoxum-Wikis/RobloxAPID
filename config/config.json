@@ -18,7 +18,7 @@
             "universes": "https://apis.roblox.com/cloud/v2/universes/%s",
             "places": "https://apis.roblox.com/cloud/v2/%s",
             "games": "https://games.roblox.com/v1/games?universeIds=%s",
-            "virtual-events": "https://apis.roblox.com/virtual-events/v1/universes/%s/virtual-events"
+            "virtual-events": "https://apis.roblox.com/virtual-events/v2/universes/%s/experience-events"
         },
         "refreshIntervals": {
             "badges": "30m",

@@ -104,7 +104,7 @@ Main configuration file:
             "universes": "https://apis.roblox.com/cloud/v2/universes/%s",
             "places": "https://apis.roblox.com/cloud/v2/%s",
             "games": "https://games.roblox.com/v1/games?universeIds=%s",
-            "virtualevents": "https://apis.roblox.com/virtual-events/v1/universes/%s/virtual-events"
+            "virtualevents": "https://apis.roblox.com/virtual-events/v2/universes/%s/experience-events"
         },
         "refreshIntervals": {
             "badges": "30m",
@@ -130,7 +130,7 @@ Main configuration file:
 - `apiMap`: Maps endpoint types to API URLs (use `%s` for ID placeholder).
 - `refreshIntervals`: Endpoint refresh intervals (overrides default).
 - `openCloud.apiKey`: Required key for Roblox Open Cloud endpoints (users/groups/universes/places).
-- `roblox.cookie`: Optional `.ROBLOSECURITY` cookie for legacy and internal endpoints. It is **required** for `virtualevents` and generally recommended for higher badge/game rate limits.
+- `roblox.cookie`: Optional `.ROBLOSECURITY` cookie for all endpoints. It is generally recommended to provide the token as it lets one get higher badge/game rate limits.
 
 ### about.json
 Static about information, if you're hosting publicly, do not change it:

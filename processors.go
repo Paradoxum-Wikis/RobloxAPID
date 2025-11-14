@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	neturl "net/url"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"robloxapid/pkg/checker"
 	"robloxapid/pkg/config"
@@ -58,6 +60,8 @@ var staticDocs = []staticDoc{
 	},
 }
 
+const iso8601Millis = "2006-01-02T15:04:05.000Z"
+
 func processEndpoint(wikiClient *wiki.WikiClient, cfg *config.Config, endpointType, id, category string) error {
 	urlTemplate, ok := cfg.DynamicEndpoints.APIMap[endpointType]
 	if !ok {
@@ -82,10 +86,17 @@ func processEndpoint(wikiClient *wiki.WikiClient, cfg *config.Config, endpointTy
 			"x-api-key": cfg.OpenCloud.APIKey,
 			"Accept":    "application/json",
 		}
-	case "virtual-events":
-		if cfg.Roblox.Cookie == "" {
-			return fmt.Errorf("roblox cookie required for %s", endpointType)
+	}
+
+	if endpointType == "virtual-events" {
+		parsedURL, err := neturl.Parse(url)
+		if err != nil {
+			return fmt.Errorf("invalid virtual-events url %s: %w", url, err)
 		}
+		query := parsedURL.Query()
+		query.Set("endsBefore", time.Now().UTC().Format(iso8601Millis))
+		parsedURL.RawQuery = query.Encode()
+		url = parsedURL.String()
 	}
 
 	if cfg.Roblox.Cookie != "" {
