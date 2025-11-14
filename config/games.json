@@ -2,8 +2,9 @@
   "description": "Legacy games Roblox API.",
   "usage": {
     "full_record": "{{#invoke:roapid|games|<universeId>}}",
-    "first_entry_field": "{{#invoke:roapid|games|<universeId>|data|1|name}}",
-    "refund_policy_field": "{{#invoke:roapid|games|<universeId>|data|1|refundPolicy|policyText}}"
+    "field": "{{#invoke:roapid|games|<universeId>|<field>}}",
+    "nested_field": "{{#invoke:roapid|games|<universeId>|<field>|<subfield>|<nestedField>}}",
+    "index": "{{#invoke:roapid|games}}"
   },
   "fields": [
     "data",

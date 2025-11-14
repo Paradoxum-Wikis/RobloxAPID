@@ -2,8 +2,9 @@
   "description": "The users open cloud API.",
   "usage": {
     "full_record": "{{#invoke:roapid|users|<userId>}}",
-    "field": "{{#invoke:roapid|users|<userId>|displayName}}",
-    "nested_field": "{{#invoke:roapid|users|<userId>|socialNetworkProfiles|facebook}}"
+    "field": "{{#invoke:roapid|users|<userId>|<field>}}",
+    "nested_field": "{{#invoke:roapid|users|<userId>|<field>|<nestedField>}}",
+    "index": "{{#invoke:roapid|users}}"
   },
   "fields": [
     "path",

@@ -2,8 +2,8 @@
   "description": "The groups open cloud API.",
   "usage": {
     "full_record": "{{#invoke:roapid|groups|<groupId>}}",
-    "field": "{{#invoke:roapid|groups|<groupId>|displayName}}",
-    "nested_field": "{{#invoke:roapid|groups|<groupId>|owner}}"
+    "field": "{{#invoke:roapid|groups|<groupId>|<field>}}",
+    "index": "{{#invoke:roapid|groups}}"
   },
   "fields": [
     "path",

@@ -2,9 +2,9 @@
   "description": "Legacy Roblox badges API integration yippee!",
   "usage": {
     "full_record": "{{#invoke:roapid|badges|<badgeId>}}",
-    "field": "{{#invoke:roapid|badges|<badgeId>|displayName}}",
-    "nested_field": "{{#invoke:roapid|badges|<badgeId>|statistics|awardedCount}}",
-    "index": "{{#invoke:roapid|badges}} - Returns this usage guide."
+    "field": "{{#invoke:roapid|badges|<badgeId>|<field>}}",
+    "nested_field": "{{#invoke:roapid|badges|<badgeId>|<field>|<nestedField>}}",
+    "index": "{{#invoke:roapid|badges}}"
   },
   "fields": [
     "id",

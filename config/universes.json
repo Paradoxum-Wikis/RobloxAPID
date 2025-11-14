@@ -2,8 +2,9 @@
   "description": "The universes open cloud API.",
   "usage": {
     "full_record": "{{#invoke:roapid|universes|<universeId>}}",
-    "field": "{{#invoke:roapid|universes|<universeId>|displayName}}",
-    "nested_field": "{{#invoke:roapid|universes|<universeId>|facebookSocialLink|title}}"
+    "field": "{{#invoke:roapid|universes|<universeId>|<field>}}",
+    "nested_field": "{{#invoke:roapid|universes|<universeId>|<field>|<nestedField>}}",
+    "index": "{{#invoke:roapid|universes}}"
   },
   "fields": [
     "path",
