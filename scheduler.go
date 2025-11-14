@@ -24,11 +24,11 @@ func parseCategory(category, prefix string) (endpointType, id string, err error)
 		return "", "", fmt.Errorf("invalid category format: %s", category)
 	}
 	remainder := normalized[len(expectedPrefix):]
-	parts := strings.SplitN(remainder, "-", 2)
-	if len(parts) < 2 || parts[0] == "" || parts[1] == "" {
+	lastDash := strings.LastIndex(remainder, "-")
+	if lastDash <= 0 || lastDash == len(remainder)-1 {
 		return "", "", fmt.Errorf("invalid category format: %s", category)
 	}
-	return parts[0], parts[1], nil
+	return remainder[:lastDash], remainder[lastDash+1:], nil
 }
 
 func normalizeCategory(category string) string {
