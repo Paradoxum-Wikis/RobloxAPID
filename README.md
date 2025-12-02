@@ -30,11 +30,17 @@ RobloxAPID requires an account with [**bot userrights**](https://community.fando
         <img src="https://static.wikia.nocookie.net/rex-3/images/e/e6/Site-logo.png/revision/latest" width="100">
       </a>
     </td>
+    <td align="center">
+      <a href="https://tds.wiki/">
+        <img src="https://tds.wiki/resources/assets/wordmark.png" width="200">
+      </a>
+    </td>
   </tr>
   <tr>
     <td align="center">ALTER EGO Wiki</td>
     <td align="center">Tower Defense Simulator Wiki</td>
     <td align="center">REx: Reincarnated Wiki</td>
+    <td align="center">The Nill Zone</td>
   </tr>
 </table>
 
