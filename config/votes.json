@@ -5,11 +5,7 @@
     "field": "{{#invoke:roapid|votes|<universeId>|<field>}}",
     "index": "{{#invoke:roapid|votes}}"
   },
-  "fields": [
-    "id",
-    "upVotes",
-    "downVotes"
-  ],
+  "fields": ["id", "upVotes", "downVotes"],
   "examples": [
     "{{#invoke:roapid|votes|1176784616}}",
     "{{#invoke:roapid|votes|1176784616|upVotes}}",

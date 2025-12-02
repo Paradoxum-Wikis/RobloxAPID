@@ -5,9 +5,7 @@
     "field": "{{#invoke:roapid|favorites|<universeId>|<field>}}",
     "index": "{{#invoke:roapid|favorites}}"
   },
-  "fields": [
-    "favoritesCount"
-  ],
+  "fields": ["favoritesCount"],
   "examples": [
     "{{#invoke:roapid|favorites|1176784616}}",
     "{{#invoke:roapid|favorites|1176784616|favoritesCount}}"
