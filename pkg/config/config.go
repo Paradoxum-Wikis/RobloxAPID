@@ -42,15 +42,14 @@ type RobloxConfig struct {
 }
 
 func LoadConfig(path string) (*Config, error) {
-	file, err := os.Open(path)
+	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 
-	decoder := json.NewDecoder(file)
+	expanded := os.ExpandEnv(string(file))
 	config := &Config{}
-	err = decoder.Decode(config)
+	err = json.Unmarshal([]byte(expanded), config)
 	if err != nil {
 		return nil, err
 	}
